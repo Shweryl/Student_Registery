@@ -37,14 +37,25 @@ module.exports.storeInvoice = async (req, res) => {
 };
 
 module.exports.retrieveStudents = async (req, res) => {
-    const page = parseInt(req.query.page) || 1; // Current page
-    const limit = parseInt(req.query.limit) || 10; // Items per page
+    const search = req.query.search || '';
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     try {
-        const students = await Invoice.find().skip(skip).limit(limit);
+        const filter = {
+            $or: [
+              { studentName: { $regex: search, $options: 'i' } },
+              { 'selectedCourses.courseName' : { $regex: search, $options: 'i' } }
+            ]
+          };
+        const students = await Invoice.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
+        const total = await Invoice.countDocuments(filter);
         res.status(201).json({
             status: "success",
             students: students,
+            currentPage: page,
+            totalPages: Math.ceil(total / limit),
+            totalStudents: total
         });
     } catch (error) {
         console.log(error);
