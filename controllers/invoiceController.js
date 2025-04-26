@@ -42,6 +42,7 @@ module.exports.retrieveStudents = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     try {
+        // filter data with user's search
         const filter = {
             $or: [
               { studentName: { $regex: search, $options: 'i' } },
@@ -50,6 +51,8 @@ module.exports.retrieveStudents = async (req, res) => {
           };
         const students = await Invoice.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 });
         const total = await Invoice.countDocuments(filter);
+
+        // pass json data filtered with search including limited items per specific page
         res.status(201).json({
             status: "success",
             students: students,

@@ -22,7 +22,7 @@ const invoiceSchema = mongoose.Schema({
         validate : [isEmail, "Please enter a valid email."]
     },
     studentPhone : {
-        type : Number,
+        type : String,
         required : [true, 'Student phone is required.']
     },
     selectedCourses : {

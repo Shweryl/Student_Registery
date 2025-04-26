@@ -73,7 +73,7 @@ module.exports.register = async (req, res) => {
 
 // get login form
 module.exports.login_form = (req, res) => {
-    return res.sendFile(path.join(__dirname, '../public/index.html'))
+    return res.sendFile(path.join(__dirname, '../public/login.html'))
 }
 
 // login action
@@ -107,5 +107,5 @@ module.exports.login = async (req, res) => {
 
 module.exports.logout = (req, res) => {
     res.cookie('jwt', '', { maxAge: 1 });
-    res.redirect('/login');
+    res.redirect('/');
 }

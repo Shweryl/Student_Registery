@@ -11,7 +11,7 @@ module.exports.requireAuth = (req, res, next) => {
     jwt.verify(token, secret,  (err, decodedToken) => {
       if (err) {
         console.log(err.message);
-        return res.redirect('/login');
+        return res.redirect('/');
         // return res.status(403).json({ error: 'Invalid or expired token' });
       } else {
         console.log(decodedToken);
@@ -19,7 +19,7 @@ module.exports.requireAuth = (req, res, next) => {
       }
     });
   } else {
-    return res.redirect('/login');
+    return res.redirect('/');
     // return res.status(401).json({ error: 'No token provided' });
   }
 };

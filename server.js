@@ -6,9 +6,12 @@ const cookieParser = require('cookie-parser');
 const authMiddleware = require('./middleware/authMiddleware')
 const userRoute = require('./routes/userRoute')
 const invoiceRoute = require('./routes/invoiceRoute')
+const studentRoute = require('./routes/studentRoute')
+require('dotenv').config();
 
 // Connecting to mongodb atlas
-const dburl = "mongodb+srv://shwezin:shwezin23@cluster0.1dku236.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const dburl = process.env.DB_URL;
+
 mongoose.connect(dburl,  { useNewUrlParser: true, useUnifiedTopology: true })
     .then((res) => console.log('db is successfully connected.'))
     .catch((err) => console.log(err))
@@ -20,22 +23,15 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-app.get("/welcome", (req, res) => {
-    res.send("Hello from my new bae:)")
-})
 
-app.get('/student_form', authMiddleware.requireAuth , (req, res) => {
-    res.sendFile(path.join(__dirname, 'protected/student_form.html'));
-});
-
-app.get('/student_list', authMiddleware.requireAuth , (req, res) => {
-    res.sendFile(path.join(__dirname, 'protected/student_list.html'));
-});
-
-
-// authentication routes
 app.use(userRoute);
 app.use(invoiceRoute);
+app.use(studentRoute);
+
+// for non-existing routes
+app.use((req, res) => {
+    res.sendFile(path.join(__dirname, './public/404.html'));
+});
 
 app.listen(3000, () => {
     console.log("sever is connect on port 3000")

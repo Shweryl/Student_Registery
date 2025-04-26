@@ -18,7 +18,8 @@
                 New Enrollment Information
             </h1>
             <a href="/student_list"
-                class="bg-indigo-800 text-white py-2 px-4 cursor-pointer rounded-sm hover:bg-indigo-900">Student Lists</a>
+                class="bg-indigo-800 text-white py-2 px-4 cursor-pointer rounded-sm hover:bg-indigo-900">Student
+                Lists</a>
         </div>
         <hr class="text-indigo-800" />
         <div class="w-full mt-4">
@@ -50,7 +51,7 @@
                             <label for="" class="text-indigo-800">Phone Number</label>
                             <span class="text-sm text-red-700 ml-3" x-show="errors.studentPhone"> * <span
                                     x-text="errors.studentPhone"></span></span>
-                            <input type="number" name="phone" @input="changeFormData" x-model="student_phone"
+                            <input type="text" name="phone" @input="changeFormData" x-model="student_phone"
                                 class="w-full mt-3 border-1 border-indigo-400 text-indigo-700 rounded-sm focus:outline-none focus:ring-4 focus:ring-indigo-300 px-4 py-2" />
                         </div>
                     </form>
@@ -82,7 +83,7 @@
                         </div>
                         <div class="mt-3">
                             <label for="" class="text-indigo-800">Phone</label>
-                            <input type="number" name="relative_phone" x-model="relative_phone"
+                            <input type="text" name="relative_phone" x-model="relative_phone"
                                 :disabled="sameInfoWithStudent"
                                 class="w-full mt-3 border-1 border-indigo-400 text-indigo-700 rounded-sm focus:outline-none focus:ring-4 focus:ring-indigo-300 px-4 py-2" />
                         </div>
@@ -117,7 +118,7 @@
                     </div>
                     <div class="mt-3">
                         <label for="" class="text-indigo-800">Phone</label>
-                        <input type="number" name="relative_phone" x-model="referral_phone"
+                        <input type="text" name="relative_phone" x-model="referral_phone"
                             class="w-full mt-3 border-1 border-indigo-400 text-indigo-700 rounded-sm focus:outline-none focus:ring-4 focus:ring-indigo-300 px-4 py-2" />
                     </div>
                 </form>
@@ -323,7 +324,7 @@
 
     </div>
     <!-- Invoice Modal -->
-    <div x-show="showInvoiceModal" x-transition:enter="transition ease-out duration-300"
+    <div style="display: none;" x-show="showInvoiceModal" x-cloak x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 transform -translate-y-10"
         x-transition:enter-end="opacity-100 transform translate-y-0"
         x-transition:leave="transition ease-in duration-200"
@@ -354,7 +355,7 @@
                         <div class="text-right">
                             <p class="font-semibold">Invoice Details</p>
                             <p x-text="invoice._id"></p>
-                            <P>Invoice Time</P>
+                            <P x-text="formatDate(invoice.createdAt)"></P>
                         </div>
                     </div>
 
@@ -509,6 +510,14 @@
                         fee: 400000,
                         action: false,
                     },
+                    {
+                        courseName: "General C2",
+                        batch: "July 2025",
+                        type: "offline",
+                        remark: "-",
+                        fee: 500000,
+                        action: false,
+                    },
                 ],
                 errors: {},
 
@@ -586,6 +595,7 @@
                             console.log(this.errors);
                         } else {
                             this.invoice = data.invoice;
+                            console.log(this.invoice);
                             this.cancelInvoice();
                             this.showInvoiceModal = true;
                             // window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -626,13 +636,23 @@
                             const pdf = new jsPDF();
                             pdf.addImage(dataUrl, 'PNG', 10, 10, 190, 0);
                             pdf.save("invoice.pdf");
+                            this.showInvoiceModal = false;
                         })
                         .catch(error => {
+                            alert("Download failed. Try again.");
                             console.error('❌ Failed to generate image:', error);
                         });
 
-                    this.showInvoiceModal = false;
+                    
 
+                },
+
+                formatDate(date) {
+                    return new Date(date).toLocaleString('en-US', {
+                        month: 'short',
+                        day: '2-digit',
+                        year: 'numeric',
+                    });
                 }
 
             }));
